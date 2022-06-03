@@ -50,9 +50,7 @@ private lateinit var  dataBase: AppDataBase
 
     private fun fetchAll(){
         GlobalScope.launch {
-            dataBase.transactionDao().insertAll(Transaction(
-                0,"food",100.90,"bado sana")
-            )
+
             transaction=dataBase.transactionDao().getAll()
 
             runOnUiThread {
