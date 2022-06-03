@@ -15,10 +15,11 @@ class TransactionAdapter
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TransactionViewHolder {
-        return  TransactionViewHolder(
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.transaction_layout,parent,false)
-        )
+        val view=LayoutInflater
+            .from(parent.context)
+            .inflate(R.layout.transaction_layout,parent,false)
+
+        return  TransactionViewHolder(view)
     }
 
     override fun onBindViewHolder(holder: TransactionViewHolder, position: Int) {
