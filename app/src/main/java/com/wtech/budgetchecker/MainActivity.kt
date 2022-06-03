@@ -36,8 +36,8 @@ private lateinit var  dataBase: AppDataBase
             layoutManager=mLayoutManager
             adapter=myAdapter
         }
-        fetchAll()
-
+//        fetchAll()
+//removed as oncreate call on resume
         binding.floatingActionButton.setOnClickListener {
             startActivity(Intent(this@MainActivity,AddTransaction::class.java))
         }
@@ -50,6 +50,9 @@ private lateinit var  dataBase: AppDataBase
 
     private fun fetchAll(){
         GlobalScope.launch {
+            dataBase.transactionDao().insertAll(Transaction(
+                0,"food",100.90,"bado sana")
+            )
             transaction=dataBase.transactionDao().getAll()
 
             runOnUiThread {
@@ -67,5 +70,15 @@ private lateinit var  dataBase: AppDataBase
         binding.totalAmount.text = "$%.3f".format(totalAmount)
         binding.budgetAmount.text = "$%.2f".format(budget)
         binding.balanceAmount.text = "$%.2f".format(expense)
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+
+    }
+
+    override fun onResume() {
+        super.onResume()
+        fetchAll()
     }
 }

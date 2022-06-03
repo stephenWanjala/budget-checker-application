@@ -3,7 +3,10 @@ package com.wtech.budgetchecker
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
+import androidx.room.Room
 import com.wtech.budgetchecker.databinding.ActivityAddTransactionBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 
 class AddTransaction : AppCompatActivity() {
@@ -33,8 +36,13 @@ class AddTransaction : AppCompatActivity() {
             if(label.isEmpty()){
                 binding.labelLayout.error="Please Enter a valid Label"
             }
-            if (amount==null){
+             else if (amount==null){
                 binding.AmountLayout.error="Please Enter A valid Amount"
+            }
+            else{
+//                take values and save to db
+                val transaction=Transaction(0,label, amount, description)
+                insert(transaction)
             }
         }
         binding.cancelButton.setOnClickListener {
@@ -42,5 +50,16 @@ class AddTransaction : AppCompatActivity() {
         }
 
 
+
     }
+        private fun insert(transaction: Transaction){
+            val dataBase= Room.databaseBuilder(
+                this@AddTransaction,AppDataBase::class.java,"transactions"
+            ).build()
+
+            GlobalScope.launch {
+                 dataBase.transactionDao().insertAll(transaction)
+                finish()
+            }
+        }
 }
