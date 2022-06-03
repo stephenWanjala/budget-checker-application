@@ -10,7 +10,7 @@ import com.wtech.budgetchecker.databinding.TransactionLayoutBinding
 import kotlin.math.abs
 
 class TransactionAdapter
-    (private  val transactions:ArrayList<Transaction>)
+    (private  var transactions:List<Transaction>)
     : RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder>() {
 
 
@@ -49,4 +49,9 @@ class TransactionAdapter
 
 
         }
+
+   fun setTransactionData(transaction: List<Transaction>){
+        this.transactions=transaction
+        notifyDataSetChanged()
+    }
 }

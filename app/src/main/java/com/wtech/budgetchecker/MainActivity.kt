@@ -3,40 +3,40 @@ package com.wtech.budgetchecker
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.DocumentsContract
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.Room
 import com.wtech.budgetchecker.databinding.ActivityMainBinding
 import com.wtech.budgetchecker.databinding.TransactionLayoutBinding
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlin.math.exp
 
 class MainActivity : AppCompatActivity() {
-private lateinit var transaction:ArrayList<Transaction>
+private lateinit var transaction:List<Transaction>
 private lateinit var binding: ActivityMainBinding
 private lateinit var  myAdapter: TransactionAdapter
 private lateinit var mLayoutManager: RecyclerView.LayoutManager
+
+private lateinit var  dataBase: AppDataBase
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding=ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        transaction= arrayListOf(
-            Transaction("weekend",905.89),
-            Transaction("Breakfast",-90.8),
-            Transaction("Gasoline",95.9),
-            Transaction("Grasp",45.89),
-            Transaction("Oranges",-45.89),
-            Transaction("Banana",45.80),
-            Transaction("Wash Wash",-75.00),
-            Transaction("water",-2.00),
-            Transaction("Car park",-700.56)
-        )
+        transaction= arrayListOf()
         myAdapter= TransactionAdapter(transaction)
         mLayoutManager=LinearLayoutManager(this@MainActivity)
+        dataBase= Room.databaseBuilder(
+            this@MainActivity,AppDataBase::class.java,"transactions"
+        ).build()
+
         binding.recyclerView.apply {
             layoutManager=mLayoutManager
             adapter=myAdapter
         }
-        updateUi()
+        fetchAll()
 
         binding.floatingActionButton.setOnClickListener {
             startActivity(Intent(this@MainActivity,AddTransaction::class.java))
@@ -45,6 +45,18 @@ private lateinit var mLayoutManager: RecyclerView.LayoutManager
 
 
 
+    }
+
+
+    private fun fetchAll(){
+        GlobalScope.launch {
+            transaction=dataBase.transactionDao().getAll()
+
+            runOnUiThread {
+                updateUi()
+                myAdapter.setTransactionData(transaction)
+            }
+        }
     }
 
     private fun updateUi(){
