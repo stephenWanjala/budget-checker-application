@@ -1,5 +1,6 @@
 package com.wtech.budgetchecker
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -27,7 +28,7 @@ private lateinit var mLayoutManager: RecyclerView.LayoutManager
             Transaction("Banana",45.80),
             Transaction("Wash Wash",-75.00),
             Transaction("water",-2.00),
-            Transaction("Car park",-700.78)
+            Transaction("Car park",-700.56)
         )
         myAdapter= TransactionAdapter(transaction)
         mLayoutManager=LinearLayoutManager(this@MainActivity)
@@ -37,6 +38,9 @@ private lateinit var mLayoutManager: RecyclerView.LayoutManager
         }
         updateUi()
 
+        binding.floatingActionButton.setOnClickListener {
+            startActivity(Intent(this@MainActivity,AddTransaction::class.java))
+        }
 
 
 
