@@ -1,12 +1,16 @@
 package com.wtech.budgetchecker
 
+import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
+import com.google.android.material.snackbar.Snackbar
 import com.wtech.budgetchecker.databinding.ActivityMainBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -37,7 +41,7 @@ private lateinit var  dataBase: AppDataBase
             layoutManager=mLayoutManager
             adapter=myAdapter
         }
-//        fetchAll()
+        fetchAll()
 //removed as on create call on resume
         binding.floatingActionButton.setOnClickListener {
             startActivity(Intent(this@MainActivity,AddTransaction::class.java))
@@ -96,6 +100,29 @@ private lateinit var  dataBase: AppDataBase
         binding.budgetAmount.text = "$%.2f".format(budget)
         binding.balanceAmount.text = "$%.2f".format(expense)
     }
+    private fun  showSnackBar(){
+        val view=binding.coordinatorLayout
+        val snackbar=Snackbar.make(view,"Transaction Deleted!",Snackbar.LENGTH_LONG)
+        snackbar.setAction("Undo"){
+            undoDeleteTransaction()
+        }
+            .setActionTextColor(ContextCompat.getColor(this@MainActivity,R.color.red))
+            .setTextColor(ContextCompat.getColor(this@MainActivity,R.color.white))
+            .show()
+    }
+
+    private fun undoDeleteTransaction() {
+        GlobalScope.launch {
+            dataBase.transactionDao().insertAll(deletedTransaction)
+            transactionList=oldTransactionList
+
+            runOnUiThread {
+                myAdapter.setTransactionData(transactionList)
+                updateUi()
+//                fetchAll()
+            }
+        }
+    }
 
     fun deleteTransaction(transaction: Transaction){
         deletedTransaction=transaction
@@ -106,7 +133,9 @@ private lateinit var  dataBase: AppDataBase
                 transact.id!=transaction.id
             }
             runOnUiThread {
+                myAdapter.setTransactionData(transactionList)
                 updateUi()
+                showSnackBar()
             }
         }
 
