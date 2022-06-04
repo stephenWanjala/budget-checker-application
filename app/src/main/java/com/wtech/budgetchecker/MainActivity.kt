@@ -1,20 +1,21 @@
 package com.wtech.budgetchecker
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.DocumentsContract
+import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.room.Room
 import com.wtech.budgetchecker.databinding.ActivityMainBinding
-import com.wtech.budgetchecker.databinding.TransactionLayoutBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import kotlin.math.exp
 
 class MainActivity : AppCompatActivity() {
-private lateinit var transaction:List<Transaction>
+    private lateinit var transaction: Transaction
+    private lateinit var deletedTransaction: Transaction
+    private lateinit var transactionList:List<Transaction>
+    private lateinit var oldTransactionList:List<Transaction>
 private lateinit var binding: ActivityMainBinding
 private lateinit var  myAdapter: TransactionAdapter
 private lateinit var mLayoutManager: RecyclerView.LayoutManager
@@ -25,8 +26,8 @@ private lateinit var  dataBase: AppDataBase
         binding=ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        transaction= arrayListOf()
-        myAdapter= TransactionAdapter(transaction)
+        transactionList= arrayListOf()
+        myAdapter= TransactionAdapter(transactionList)
         mLayoutManager=LinearLayoutManager(this@MainActivity)
         dataBase= Room.databaseBuilder(
             this@MainActivity,AppDataBase::class.java,"transactions"
@@ -43,7 +44,27 @@ private lateinit var  dataBase: AppDataBase
         }
 
 
+//        swipeTo delete
+        val itemTouchHelper=object :ItemTouchHelper.SimpleCallback(0,ItemTouchHelper.RIGHT){
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder,
+            ): Boolean {
+               return false
+            }
 
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                deleteTransaction(transactionList[viewHolder.adapterPosition])
+            }
+
+        }
+//instanciate  the ontouchHelper
+
+        val swipeHelper=ItemTouchHelper(itemTouchHelper)
+
+//Attach to the  recycler view
+        swipeHelper.attachToRecyclerView(binding.recyclerView)
 
     }
 
@@ -52,18 +73,23 @@ private lateinit var  dataBase: AppDataBase
         GlobalScope.launch {
 
 //            dataBase.transactionDao().insertAll(Transaction(0,"Ice cream",-80.00,"ate It"))
-            transaction=dataBase.transactionDao().getAll()
+            transactionList=dataBase.transactionDao().getAll()
 
             runOnUiThread {
                 updateUi()
-                myAdapter.setTransactionData(transaction)
+                myAdapter.setTransactionData(transactionList)
             }
         }
     }
 
+
+
+
+
+
     private fun updateUi(){
-        val totalAmount: Double = transaction.sumOf { it.amount }
-        val budget= transaction.filter { it.amount > 0 }.sumOf { it.amount }
+        val totalAmount: Double = transactionList.sumOf { it.amount }
+        val budget= transactionList.filter { it.amount > 0 }.sumOf { it.amount }
         val expense=totalAmount-budget
 
         binding.totalAmount.text = "$%.3f".format(totalAmount)
@@ -71,6 +97,21 @@ private lateinit var  dataBase: AppDataBase
         binding.balanceAmount.text = "$%.2f".format(expense)
     }
 
+    fun deleteTransaction(transaction: Transaction){
+        deletedTransaction=transaction
+        oldTransactionList=transactionList
+        GlobalScope.launch {
+            dataBase.transactionDao().delete(transaction)
+            transactionList=transactionList.filter { transact ->
+                transact.id!=transaction.id
+            }
+            runOnUiThread {
+                updateUi()
+            }
+        }
+
+
+    }
     override fun onRestart() {
         super.onRestart()
 
