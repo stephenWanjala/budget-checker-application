@@ -1,9 +1,9 @@
 package com.wtech.budgetchecker
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.wtech.budgetchecker.databinding.TransactionLayoutBinding
@@ -36,6 +36,12 @@ class TransactionAdapter
                 text="-$%.2f".format(abs(transaction.amount))
                 setTextColor(ContextCompat.getColor(context,R.color.red))
             }
+        }
+
+        holder.itemView.setOnClickListener {
+            val intent=Intent(holder.itemView.context,EditTransactionDetails::class.java)
+            intent.putExtra("transaction",transaction)
+            holder.itemView.context.startActivity(intent)
         }
 
 

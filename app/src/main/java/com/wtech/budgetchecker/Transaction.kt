@@ -2,6 +2,7 @@ package com.wtech.budgetchecker
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.io.Serializable
 
 @Entity(tableName = "transactions")
 data class Transaction(
@@ -9,4 +10,4 @@ data class Transaction(
     val label:String,
     val amount:Double,
     val description:String,
-)
+):Serializable
