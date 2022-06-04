@@ -14,7 +14,7 @@
         android:layout_marginEnd="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-       android:background="@drawable/drawable_close_button" />
+        android:background="@drawable/drawable_close_button" />
 
     <LinearLayout
         android:id="@+id/linearLayout2"

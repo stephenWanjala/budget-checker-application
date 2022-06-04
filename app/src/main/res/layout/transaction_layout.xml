@@ -14,21 +14,21 @@
         android:id="@+id/cardLinear"
         android:orientation="horizontal"
         android:gravity="center_vertical">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/label"
             android:text="Banana"
             android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            android:layout_weight="1"/>
+            android:layout_weight="1" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="$ 30"
             android:id="@+id/amount"
-            android:textAppearance="@style/TextAppearance.AppCompat.Large"
-            />
+            android:textAppearance="@style/TextAppearance.AppCompat.Large" />
     </LinearLayout>
 
 </LinearLayout>
