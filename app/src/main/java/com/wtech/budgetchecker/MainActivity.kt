@@ -37,7 +37,7 @@ private lateinit var  dataBase: AppDataBase
             adapter=myAdapter
         }
 //        fetchAll()
-//removed as oncreate call on resume
+//removed as on create call on resume
         binding.floatingActionButton.setOnClickListener {
             startActivity(Intent(this@MainActivity,AddTransaction::class.java))
         }
@@ -51,6 +51,7 @@ private lateinit var  dataBase: AppDataBase
     private fun fetchAll(){
         GlobalScope.launch {
 
+//            dataBase.transactionDao().insertAll(Transaction(0,"Ice cream",-80.00,"ate It"))
             transaction=dataBase.transactionDao().getAll()
 
             runOnUiThread {

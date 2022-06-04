@@ -17,32 +17,29 @@ class AddTransaction : AppCompatActivity() {
         binding = ActivityAddTransactionBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val amount: Double? = binding.editTextAmount.text.toString().toDoubleOrNull()
-        val label: String = binding.editTextLabel.text.toString()
-        val description: String = binding.editTextDescription.text.toString()
+      binding.addTransaction.setOnClickListener {
+          val amount: Double? = binding.editTextAmount.text.toString().toDoubleOrNull()
+          val label: String = binding.editTextLabel.text.toString()
+          val description: String = binding.editTextDescription.text.toString()
+
+          if (amount ==null){
+              binding.AmountLayout.error="Enter Amount"
+          }  else if (label.isNullOrEmpty()){
+              binding.labelLayout.error="Enter label"
+          } else{
+              val  transaction=Transaction(0,label, amount, description)
+              insert(transaction)
+          }
+      }
 
         binding.editTextLabel.addTextChangedListener {
-            if (it!!.count() >0){
+            if (it?.isNotEmpty() == true){
                 binding.labelLayout.error=null
             }
         }
         binding.editTextAmount.addTextChangedListener {
-            if (it!!.isNotEmpty()){
+            if (it?.isNotEmpty() == true){
                 binding.AmountLayout.error=null
-            }
-        }
-
-        binding.addTransaction.setOnClickListener {
-            if(label.isEmpty()){
-                binding.labelLayout.error="Please Enter a valid Label"
-            }
-             else if (amount==null){
-                binding.AmountLayout.error="Please Enter A valid Amount"
-            }
-            else{
-//                take values and save to db
-                val transaction=Transaction(0,label, amount, description)
-                insert(transaction)
             }
         }
         binding.cancelButton.setOnClickListener {
