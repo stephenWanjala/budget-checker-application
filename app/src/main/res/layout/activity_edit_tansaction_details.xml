@@ -85,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:drawablePadding="12dp"
                 android:text="Description"
-                android:textAppearance="@style/TextAppearance.Material3.DisplayMedium"
+                android:textAppearance="@style/TextAppearance.Material3.TitleLarge"
                 android:inputType="text"
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>

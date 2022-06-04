@@ -45,6 +45,7 @@ class TransactionAdapter
         }
 
 
+
     }
 
     override fun getItemCount(): Int=transactions.size
