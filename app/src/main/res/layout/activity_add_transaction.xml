@@ -62,7 +62,7 @@
                 android:drawableStart="@drawable/amount_selector"
                 android:drawablePadding="12dp"
                 android:hint="Amount"
-                android:inputType="numberDecimal"
+                android:inputType="numberDecimal|numberSigned"
                 android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
